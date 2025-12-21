@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Комната</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+<div class="room">
+
+
+<header>
+<span>Комната: <b id="roomCode"></b></span>
+<button onclick="toggleTheme()">🌗</button>
+</header>
+
+
+<section class="video-section">
+<input id="videoUrl" placeholder="Вставь любую ссылку на видео">
+<button onclick="loadVideo()">Открыть</button>
+
+
+<div class="player">
+<iframe id="videoFrame" allowfullscreen></iframe>
+</div>
+</section>
+
+
+<section class="chat">
+<div id="messages"></div>
+<input id="msg" placeholder="Сообщение">
+<button onclick="sendMsg()">➤</button>
+</section>
+
+
+<footer>
+<button onclick="toggleMic()">🎤 Микрофон</button>
+</footer>
+
+
+</div>
+
+
+<script src="app.js"></script>
+<script src="webrtc.js"></script>
+</body>
+</html>
