@@ -1,263 +1,385 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>С Новым Годом!</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>С Новым Годом!</title>
 
-<style>
-/* ====== RESET ====== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: "Segoe UI", Arial, sans-serif;
-}
+  <style>
+    /* ====== RESET ====== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
 
-/* ====== BACKGROUND ====== */
-body {
-  background: linear-gradient(120deg, #0b1d2b, #0e2f3a, #0b1d2b);
-  background-size: 300% 300%;
-  animation: bgBreath 20s ease-in-out infinite;
-  color: #ffffff;
-}
+    /* ====== BACKGROUND ====== */
+    body {
+      background: linear-gradient(120deg, #0b1d2b, #0e2f3a, #0b1d2b);
+      background-size: 300% 300%;
+      animation: bgBreath 20s ease-in-out infinite;
+      color: #ffffff;
+    }
 
-@keyframes bgBreath {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+    @keyframes bgBreath {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-/* ====== STARS ====== */
-.stars {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}
-.star {
-  position: absolute;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0));
-  border-radius: 50%;
-  animation: starTwinkle ease-in-out infinite;
-}
-@keyframes starTwinkle {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
+    /* ====== STARS ====== */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0));
+      border-radius: 50%;
+      animation: starTwinkle ease-in-out infinite;
+    }
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
 
-/* ====== SNOW ====== */
-.snowflake {
-  position: fixed;
-  top: -10px;
-  color: rgba(255,255,255,0.9);
-  user-select: none;
-  pointer-events: none;
-  animation-name: snowFall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes snowFall {
-  from {
-    transform: translateX(0) translateY(-10px);
-  }
-  to {
-    transform: translateX(var(--drift)) translateY(110vh);
-  }
-}
+    /* ====== SNOW ====== */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: rgba(255,255,255,0.9);
+      user-select: none;
+      pointer-events: none;
+      animation-name: snowFall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes snowFall {
+      from {
+        transform: translateX(0) translateY(-10px);
+      }
+      to {
+        transform: translateX(var(--drift)) translateY(110vh);
+      }
+    }
 
-/* ====== MAIN CONTAINER ====== */
-.scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  padding: 20px;
-  text-align: center;
-}
+    /* ====== MAIN CONTAINER ====== */
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 20px;
+      text-align: center;
+    }
 
-/* ====== TITLE ====== */
-.title {
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 600;
-  background: linear-gradient(90deg, #f6e7b2, #7fffd4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 12px rgba(255, 230, 180, 0.6);
-  animation: titlePulse 6s ease-in-out infinite;
-}
-@keyframes titlePulse {
-  0%, 100% { opacity: 0.85; }
-  50% { opacity: 1; }
-}
+    /* ====== TITLE ====== */
+    .title {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 600;
+      background: linear-gradient(90deg, #f6e7b2, #7fffd4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 12px rgba(255, 230, 180, 0.6);
+      animation: titlePulse 6s ease-in-out infinite;
+    }
+    @keyframes titlePulse {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 1; }
+    }
 
-/* ====== TREE ====== */
-.tree-wrapper {
-  position: relative;
-  animation: treeFloat 5s ease-in-out infinite,
-             treeTilt 6s ease-in-out infinite;
-}
-@keyframes treeFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-@keyframes treeTilt {
-  0%, 100% { rotate: 0deg; }
-  50% { rotate: 2deg; }
-}
+    /* ====== TREE ====== */
+    .tree-wrapper {
+      position: relative;
+      animation: treeFloat 5s ease-in-out infinite,
+                 treeTilt 6s ease-in-out infinite;
+    }
+    @keyframes treeFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes treeTilt {
+      0%, 100% { rotate: 0deg; }
+      50% { rotate: 2deg; }
+    }
 
-.tree {
-  width: clamp(200px, 35vw, 340px);
-  display: block;
-  z-index: 2;
-}
+    .tree {
+      width: clamp(200px, 35vw, 340px);
+      display: block;
+      z-index: 2;
+    }
 
-/* ====== TREE SHADOW ====== */
-.tree-shadow {
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 18px;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.35), rgba(255,255,255,0));
-  filter: blur(6px);
-  z-index: 1;
-}
+    /* ====== TREE SHADOW ====== */
+    .tree-shadow {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 18px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.35), rgba(255,255,255,0));
+      filter: blur(6px);
+      z-index: 1;
+    }
 
-/* ====== TIMER ====== */
-.timer {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+    /* ====== TIMER ====== */
+    .timer {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-.time-card {
-  min-width: 90px;
-  padding: 14px 16px;
-  background: rgba(255,255,255,0.18);
-  backdrop-filter: blur(8px);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.35);
-  box-shadow:
-    inset 0 0 10px rgba(255,255,255,0.25),
-    0 0 20px rgba(255,255,255,0.15);
-}
+    .time-card {
+      min-width: 90px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.35);
+      box-shadow:
+        inset 0 0 10px rgba(255,255,255,0.25),
+        0 0 20px rgba(255,255,255,0.15);
+    }
 
-.time-value {
-  font-size: 36px;
-  font-weight: 700;
-  color: #fff6d5;
-  text-shadow: 0 0 12px rgba(255,220,150,0.8);
-}
+    .time-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff6d5;
+      text-shadow: 0 0 12px rgba(255,220,150,0.8);
+    }
 
-.time-label {
-  font-size: 13px;
-  opacity: 0.7;
-  font-style: italic;
-}
+    .time-label {
+      font-size: 13px;
+      opacity: 0.7;
+      font-style: italic;
+    }
 
-/* ====== RESPONSIVE ====== */
-@media (max-width: 480px) {
-  .timer {
-    gap: 10px;
-  }
-  .time-card {
-    min-width: 80px;
-  }
-}
-</style>
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 480px) {
+      .timer {
+        gap: 10px;
+      }
+      .time-card {
+        min-width: 80px;
+      }
+    }
+
+    /* ====== FIREWORKS ====== */
+    #fireworks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+    #fireworks div {
+      position: absolute;
+      pointer-events: none;
+      opacity: 1;
+      animation: explode 1.2s ease-out forwards;
+    }
+    @keyframes explode {
+      0% {
+        transform: translate(0, 0);
+        opacity: 1;
+        scale: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty));
+        opacity: 0;
+        scale: 0.2;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="stars" id="stars"></div>
+  <!-- Аудио (должен быть в той же папке) -->
+  <audio id="newYearSong" src="ABBA - Happy New Year.mp3" preload="auto"></audio>
 
-<div class="scene">
-  <div class="title">С Новым Годом!</div>
+  <div class="stars" id="stars"></div>
 
-  <div class="tree-wrapper">
-    <img src="newyear_no_bg.png" alt="Ёлка" class="tree" />
-    <div class="tree-shadow"></div>
+  <div class="scene">
+    <div class="title">С Новым Годом!</div>
+
+    <div class="tree-wrapper">
+      <img src="newyear_no_bg.png" alt="Ёлка" class="tree" />
+      <div class="tree-shadow"></div>
+    </div>
+
+    <div class="timer">
+      <div class="time-card">
+        <div class="time-value" id="hours">00</div>
+        <div class="time-label">часов</div>
+      </div>
+      <div class="time-card">
+        <div class="time-value" id="minutes">00</div>
+        <div class="time-label">минут</div>
+      </div>
+      <div class="time-card">
+        <div class="time-value" id="seconds">00</div>
+        <div class="time-label">секунд</div>
+      </div>
+    </div>
   </div>
 
-  <div class="timer">
-    <div class="time-card">
-      <div class="time-value" id="hours">00</div>
-      <div class="time-label">часов</div>
-    </div>
-    <div class="time-card">
-      <div class="time-value" id="minutes">00</div>
-      <div class="time-label">минут</div>
-    </div>
-    <div class="time-card">
-      <div class="time-value" id="seconds">00</div>
-      <div class="time-label">секунд</div>
-    </div>
-  </div>
-</div>
+  <script>
+    /* ====== STARS GENERATION ====== */
+    const starsContainer = document.getElementById("stars");
+    const starCount = 80;
 
-<script>
-/* ====== STARS GENERATION ====== */
-const starsContainer = document.getElementById("stars");
-const starCount = 80;
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      const size = Math.random() * 2 + 1;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.animationDuration = (Math.random() * 3 + 3) + "s";
+      starsContainer.appendChild(star);
+    }
 
-for (let i = 0; i < starCount; i++) {
-  const star = document.createElement("div");
-  star.className = "star";
-  const size = Math.random() * 2 + 1;
-  star.style.width = size + "px";
-  star.style.height = size + "px";
-  star.style.left = Math.random() * 100 + "%";
-  star.style.top = Math.random() * 100 + "%";
-  star.style.animationDuration = (Math.random() * 3 + 3) + "s";
-  starsContainer.appendChild(star);
-}
+    /* ====== SNOW GENERATION ====== */
+    const snowCount = 85;
+    for (let i = 0; i < snowCount; i++) {
+      const snow = document.createElement("div");
+      snow.className = "snowflake";
+      snow.textContent = Math.random() > 0.5 ? "❄" : "❅";
+      const size = Math.random() * 12 + 8;
+      snow.style.fontSize = size + "px";
+      snow.style.left = Math.random() * 100 + "%";
+      snow.style.opacity = Math.random() * 0.6 + 0.3;
+      snow.style.setProperty("--drift", (Math.random() * 80 - 40) + "px");
+      snow.style.animationDuration = (Math.random() * 10 + 12) + "s";
+      snow.style.animationDelay = (-Math.random() * 20) + "s";
+      document.body.appendChild(snow);
+    }
 
-/* ====== SNOW GENERATION ====== */
-const snowCount = 85;
-for (let i = 0; i < snowCount; i++) {
-  const snow = document.createElement("div");
-  snow.className = "snowflake";
-  snow.textContent = Math.random() > 0.5 ? "❄" : "❅";
-  const size = Math.random() * 12 + 8;
-  snow.style.fontSize = size + "px";
-  snow.style.left = Math.random() * 100 + "%";
-  snow.style.opacity = Math.random() * 0.6 + 0.3;
-  snow.style.setProperty("--drift", (Math.random() * 80 - 40) + "px");
-  snow.style.animationDuration = (Math.random() * 10 + 12) + "s";
-  snow.style.animationDelay = (-Math.random() * 20) + "s";
-  document.body.appendChild(snow);
-}
+    /* ====== FIREWORKS SYSTEM ====== */
+    const fireworksContainer = document.createElement("div");
+    fireworksContainer.id = "fireworks";
+    document.body.appendChild(fireworksContainer);
 
-/* ====== TIMER ====== */
-const targetTime = Date.UTC(2025, 11, 31, 19, 0, 0);
+    let fireworksActive = false;
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000'];
 
-function updateTimer() {
-  const now = Date.now();
-  let diff = targetTime - now;
-  if (diff < 0) diff = 0;
+    function createFirework(x, y) {
+      const particles = 30;
+      for (let i = 0; i < particles; i++) {
+        const particle = document.createElement("div");
+        particle.textContent = "✨";
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 100 + 50;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const fontSize = Math.random() * 20 + 10;
 
-  const totalSeconds = Math.floor(diff / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+        particle.style.left = x + "px";
+        particle.style.top = y + "px";
+        particle.style.color = color;
+        particle.style.fontSize = fontSize + "px";
+        particle.style.setProperty("--tx", Math.cos(angle) * speed + "px");
+        particle.style.setProperty("--ty", Math.sin(angle) * speed + "px");
 
-  document.getElementById("hours").textContent = String(hours).padStart(2, "0");
-  document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
-  document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
-}
+        fireworksContainer.appendChild(particle);
+        setTimeout(() => particle.remove(), 1200);
+      }
+    }
 
-updateTimer();
-setInterval(updateTimer, 1000);
-</script>
+    function startFireworks() {
+      if (fireworksActive) return;
+      fireworksActive = true;
+      setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight * 0.6;
+        createFirework(x, y);
+      }, 700);
+    }
+
+    /* ====== TIMER & CELEBRATION ====== */
+    // Цель: 00:00 по Москве (UTC+3) = 21:00 UTC 31 декабря 2025
+    const targetTime = Date.UTC(2025, 11, 31, 21, 0, 0);
+    const audio = document.getElementById("newYearSong");
+    let celebrationStarted = false;
+
+    function startCelebration() {
+      if (celebrationStarted) return;
+      celebrationStarted = true;
+
+      // Обновить заголовок
+      document.querySelector(".title").innerHTML = "С Новым<br>2026 годом!";
+
+      // Запустить салют
+      startFireworks();
+
+      // Попытка воспроизвести музыку
+      audio.volume = 0.7;
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(() => {
+          showUnmuteButton();
+        });
+      }
+    }
+
+    function showUnmuteButton() {
+      const btn = document.createElement("button");
+      btn.textContent = "🎵 Включить музыку";
+      btn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 2px solid #fff6d5;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 200;
+      `;
+      btn.onclick = () => {
+        audio.play().then(() => {
+          btn.remove();
+        }).catch(console.error);
+      };
+      document.body.appendChild(btn);
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const diff = targetTime - now;
+
+      if (diff <= 0) {
+        startCelebration();
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+      document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+      document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+  </script>
 </body>
 </html>
