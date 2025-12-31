@@ -1,1743 +1,263 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Guga-ai</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #050509;
-      --bg-elevated: #101018;
-      --border: #262637;
-      --accent: #5a7cff;
-      --accent-soft: rgba(90, 124, 255, 0.12);
-      --accent-strong: rgba(90, 124, 255, 0.35);
-      --text: #f5f5f7;
-      --text-muted: #9b9bb5;
-      --danger: #ff5c5c;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --shadow-strong: 0 22px 50px rgba(0, 0, 0, 0.8);
-      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      background: radial-gradient(circle at top, #1b233a 0, #050509 55%);
-      color: var(--text);
-      overflow: hidden;
-    }
-
-    .app {
-      display: flex;
-      height: 100vh;
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
-      width: 280px;
-      border-right: 1px solid var(--border);
-      background: rgba(5, 5, 12, 0.92);
-      backdrop-filter: blur(20px);
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .logo {
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      font-size: 14px;
-      text-transform: uppercase;
-      color: #ffffff;
-    }
-
-    .logo-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #6dffb5, #2cff87);
-      margin-left: 6px;
-      box-shadow: 0 0 12px rgba(109, 255, 181, 0.8);
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    button,
-    .button-like {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: linear-gradient(140deg, #181827, #090910);
-      color: var(--text);
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 13px;
-      transition:
-        background 150ms ease,
-        transform 120ms ease,
-        box-shadow 150ms ease,
-        border-color 150ms ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    button:hover,
-    .button-like:hover {
-      background: linear-gradient(140deg, #242645, #0e0e19);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-soft);
-      border-color: var(--accent-soft);
-    }
-
-    button:active,
-    .button-like:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    #new-chat-btn {
-      padding-inline: 10px;
-      font-size: 12px;
-    }
-
-    #settings-btn {
-      width: 100%;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .chats-list {
-      flex: 1;
-      overflow-y: auto;
-      margin-bottom: 8px;
-      padding-right: 4px;
-    }
-
-    .chat-item {
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 13px;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      transition: background 150ms ease, color 150ms ease, transform 120ms ease;
-      position: relative;
-    }
-
-    .chat-item-title {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .chat-item:hover {
-      background: rgba(34, 36, 68, 0.8);
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-
-    .chat-item.active {
-      background: radial-gradient(circle at top left, rgba(90, 124, 255, 0.35), rgba(15, 15, 30, 0.96));
-      color: #ffffff;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .chat-item-delete {
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      padding: 0;
-      font-size: 16px;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .chat-item-delete:hover {
-      background: rgba(255, 92, 92, 0.15);
-      color: var(--danger);
-    }
-
-    /* CHAT AREA */
-
-    .chat {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .chat-header {
-      padding: 10px 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      background: linear-gradient(135deg, rgba(14, 16, 28, 0.98), rgba(6, 6, 12, 0.96));
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
-      z-index: 2;
-    }
-
-    .model-indicator {
-      font-size: 12px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .model-pill {
-      padding: 3px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(116, 144, 255, 0.9);
-      background: radial-gradient(circle at top left, rgba(116, 144, 255, 0.5), rgba(8, 8, 18, 0.96));
-      color: #ffffff;
-      font-size: 11px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .model-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #7affc1;
-      box-shadow: 0 0 10px rgba(122, 255, 193, 0.9);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-    }
-
-    .toggle input {
-      display: none;
-    }
-
-    .toggle-switch {
-      width: 32px;
-      height: 18px;
-      border-radius: 999px;
-      background: #2b2b3a;
-      position: relative;
-      transition: background 150ms ease;
-    }
-
-    .toggle-thumb {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #c0c0ff;
-      transition: transform 150ms ease, background 150ms ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-    }
-
-    .toggle input:checked + .toggle-switch {
-      background: #4d6bff;
-    }
-
-    .toggle input:checked + .toggle-switch .toggle-thumb {
-      transform: translateX(14px);
-      background: #ffffff;
-    }
-
-    .temp-display {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 18px 14px;
-      position: relative;
-      scroll-behavior: smooth;
-    }
-
-    .messages-inner {
-      max-width: 780px;
-      margin: 0 auto;
-      padding-bottom: 10px;
-    }
-
-    .starter-hint {
-      text-align: center;
-      margin-top: 24px;
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-
-    .starter-hint-title {
-      font-size: 15px;
-      margin-bottom: 4px;
-      color: var(--text);
-    }
-
-    .starter-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .starter-tag {
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(100, 110, 210, 0.5);
-      font-size: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-    }
-
-    .starter-tag:hover {
-      background: rgba(90, 124, 255, 0.15);
-      border-color: rgba(130, 155, 255, 0.9);
-      color: #ffffff;
-    }
-
-    .message {
-      display: flex;
-      margin-bottom: 16px;
-      animation: fadeInUp 200ms ease-out;
-    }
-
-    .message.user {
-      justify-content: flex-end;
-    }
-
-    .message.assistant {
-      justify-content: flex-start;
-    }
-
-    .avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      margin-right: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .avatar.user {
-      background: radial-gradient(circle at top left, #6b6bff, #3c3cff);
-      margin-left: 10px;
-      margin-right: 0;
-    }
-
-    .avatar.assistant {
-      background: radial-gradient(circle at top left, #58ffc6, #2a9f72);
-    }
-
-    .bubble-wrapper {
-      max-width: 720px;
-    }
-
-    .bubble {
-      border-radius: var(--radius-lg);
-      padding: 10px 12px;
-      border: 1px solid rgba(150, 150, 255, 0.1);
-      box-shadow: var(--shadow-soft);
-      font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .message.user .bubble {
-      background: linear-gradient(135deg, #3c3cff, #6b6bff);
-      color: #ffffff;
-      text-align: left;
-    }
-
-    .message.assistant .bubble {
-      background: rgba(14, 14, 31, 0.96);
-      color: var(--text);
-    }
-
-    .meta-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 4px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .model-tag {
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(90, 124, 255, 0.15);
-      border: 1px solid rgba(120, 140, 255, 0.6);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #c5d0ff;
-    }
-
-    .timestamp {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    /* Markdown styling */
-
-    .bubble h1,
-    .bubble h2,
-    .bubble h3 {
-      margin: 8px 0 4px;
-      font-weight: 600;
-    }
-
-    .bubble h1 {
-      font-size: 18px;
-    }
-
-    .bubble h2 {
-      font-size: 16px;
-    }
-
-    .bubble h3 {
-      font-size: 15px;
-    }
-
-    .bubble p {
-      margin: 4px 0;
-    }
-
-    .bubble ul,
-    .bubble ol {
-      margin: 4px 0 4px 18px;
-      padding-left: 14px;
-    }
-
-    .bubble li {
-      margin: 3px 0;
-    }
-
-    .bubble table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 6px 0;
-      font-size: 13px;
-    }
-
-    .bubble th,
-    .bubble td {
-      padding: 4px 6px;
-      border: 1px solid rgba(120, 120, 160, 0.5);
-    }
-
-    .bubble th {
-      background: rgba(50, 50, 90, 0.7);
-    }
-
-    .bubble code {
-      font-family: "JetBrains Mono", "Fira Code", monospace;
-      font-size: 12px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 1px 3px;
-      border-radius: 4px;
-    }
-
-    .bubble pre {
-      background: #05050c;
-      border-radius: var(--radius-md);
-      padding: 10px;
-      overflow-x: auto;
-      border: 1px solid rgba(100, 100, 160, 0.6);
-      margin: 6px 0;
-      position: relative;
-    }
-
-    .code-block-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .code-lang {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-    }
-
-    .copy-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(150, 150, 200, 0.7);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-muted);
-      padding: 2px 8px;
-      font-size: 11px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .copy-btn:hover {
-      background: rgba(180, 180, 255, 0.1);
-      color: #ffffff;
-    }
-
-    /* Typing indicator */
-
-    .typing-indicator {
-      position: sticky;
-      bottom: 0;
-      left: 0;
-      padding: 0 18px 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: linear-gradient(to top, rgba(5, 5, 10, 0.98), transparent);
-      pointer-events: none;
-    }
-
-    .typing-inner {
-      max-width: 780px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .typing-pulse {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 16px var(--accent-strong);
-      animation: pulse 1.3s infinite ease-in-out;
-    }
-
-    .typing-text {
-      font-size: 12px;
-    }
-
-    .dots::after {
-      content: "...";
-      animation: dots 1s steps(3, end) infinite;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* INPUT AREA */
-
-    .chat-input-area {
-      padding: 10px 18px 14px;
-      border-top: 1px solid var(--border);
-      background: radial-gradient(circle at bottom, rgba(40, 40, 80, 0.6), rgba(3, 3, 8, 0.98));
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
-      z-index: 2;
-    }
-
-    .input-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-    }
-
-    .file-input-label,
-    .icon-btn {
-      border-radius: 999px;
-      width: 34px;
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--border);
-      background: radial-gradient(circle at top left, rgba(50, 50, 90, 0.9), rgba(10, 10, 18, 0.96));
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 16px;
-      transition: background 150ms ease, box-shadow 150ms ease, transform 120ms ease, color 150ms ease, border-color 150ms ease;
-      flex-shrink: 0;
-    }
-
-    .file-input-label:hover,
-    .icon-btn:hover {
-      background: radial-gradient(circle at top left, rgba(80, 95, 170, 0.9), rgba(18, 18, 30, 0.96));
-      color: #ffffff;
-      border-color: var(--accent-soft);
-      box-shadow: var(--shadow-soft);
-      transform: translateY(-1px);
-    }
-
-    .icon-btn:active,
-    .file-input-label:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    #mic-btn.active {
-      background: radial-gradient(circle at top left, rgba(255, 88, 120, 0.92), rgba(100, 25, 35, 0.95));
-      border-color: rgba(255, 150, 180, 0.9);
-      color: #ffffff;
-      box-shadow: 0 0 14px rgba(255, 120, 150, 0.9);
-    }
-
-    #user-input {
-      flex: 1;
-      resize: none;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background: rgba(8, 8, 18, 0.96);
-      padding: 9px 14px;
-      color: var(--text);
-      font-size: 14px;
-      line-height: 1.45;
-      max-height: 120px;
-      min-height: 34px;
-      outline: none;
-      box-shadow: inset 0 0 0 1px rgba(40, 40, 80, 0.5);
-      transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
-    }
-
-    #user-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    #user-input:focus {
-      border-color: rgba(116, 144, 255, 0.9);
-      box-shadow:
-        inset 0 0 0 1px rgba(116, 144, 255, 0.5),
-        0 0 24px rgba(90, 124, 255, 0.4);
-      background: rgba(12, 12, 24, 0.98);
-    }
-
-    #send-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      border: none;
-      background: radial-gradient(circle at top left, #5a7cff, #3848ff);
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 16px;
-      flex-shrink: 0;
-      box-shadow: 0 10px 26px rgba(50, 80, 230, 0.6);
-    }
-
-    #send-btn:hover {
-      box-shadow: 0 12px 34px rgba(70, 100, 255, 0.8);
-      transform: translateY(-1px);
-    }
-
-    #send-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 10px 20px rgba(50, 80, 230, 0.6);
-    }
-
-    .input-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .input-hint span {
-      opacity: 0.9;
-    }
-
-    .files-summary {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* MODAL */
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 5, 10, 0.82);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      backdrop-filter: blur(20px);
-    }
-
-    .modal.hidden {
-      display: none;
-    }
-
-    .modal-content {
-      background: radial-gradient(circle at top left, rgba(74, 89, 180, 0.5), rgba(6, 6, 14, 0.98));
-      border-radius: 20px;
-      padding: 18px 20px 16px;
-      border: 1px solid rgba(130, 140, 230, 0.7);
-      width: 340px;
-      box-shadow: var(--shadow-strong);
-      color: var(--text);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .modal-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .modal-section {
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
-
-    .modal-section label {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .range-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .modal input[type="range"] {
-      width: 100%;
-    }
-
-    .modal input[type="number"],
-    .modal select {
-      width: 100%;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(10, 10, 22, 0.96);
-      color: var(--text);
-      padding: 5px 10px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .btn-secondary {
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(10, 10, 20, 0.96);
-      color: var(--text-muted);
-      padding: 6px 10px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .btn-secondary:hover {
-      border-color: rgba(120, 120, 170, 0.7);
-      color: var(--text);
-    }
-
-    .btn-danger {
-      border-radius: 999px;
-      border: 1px solid rgba(255, 120, 140, 0.7);
-      background: rgba(80, 15, 30, 0.96);
-      color: #ffd0d6;
-      padding: 6px 10px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .btn-danger:hover {
-      background: rgba(120, 22, 40, 0.98);
-      color: #ffffff;
-    }
-
-    /* SCROLLBARS */
-
-    .chats-list::-webkit-scrollbar,
-    .messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chats-list::-webkit-scrollbar-thumb,
-    .messages::-webkit-scrollbar-thumb {
-      background: rgba(120, 120, 170, 0.4);
-      border-radius: 999px;
-    }
-
-    .chats-list::-webkit-scrollbar-track,
-    .messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    /* RESPONSIVE */
-
-    @media (max-width: 900px) {
-      .sidebar {
-        display: none;
-      }
-    }
-
-    /* ANIMATIONS */
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        opacity: 0.8;
-      }
-      50% {
-        transform: scale(1.2);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 0.8;
-      }
-    }
-
-    @keyframes dots {
-      0% {
-        content: "";
-      }
-      33% {
-        content: ".";
-      }
-      66% {
-        content: "..";
-      }
-      100% {
-        content: "...";
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>С Новым Годом!</title>
+
+<style>
+/* ====== RESET ====== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ====== BACKGROUND ====== */
+body {
+  background: linear-gradient(120deg, #0b1d2b, #0e2f3a, #0b1d2b);
+  background-size: 300% 300%;
+  animation: bgBreath 20s ease-in-out infinite;
+  color: #ffffff;
+}
+
+@keyframes bgBreath {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ====== STARS ====== */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0));
+  border-radius: 50%;
+  animation: starTwinkle ease-in-out infinite;
+}
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ====== SNOW ====== */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: rgba(255,255,255,0.9);
+  user-select: none;
+  pointer-events: none;
+  animation-name: snowFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes snowFall {
+  from {
+    transform: translateX(0) translateY(-10px);
+  }
+  to {
+    transform: translateX(var(--drift)) translateY(110vh);
+  }
+}
+
+/* ====== MAIN CONTAINER ====== */
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* ====== TITLE ====== */
+.title {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 600;
+  background: linear-gradient(90deg, #f6e7b2, #7fffd4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(255, 230, 180, 0.6);
+  animation: titlePulse 6s ease-in-out infinite;
+}
+@keyframes titlePulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ====== TREE ====== */
+.tree-wrapper {
+  position: relative;
+  animation: treeFloat 5s ease-in-out infinite,
+             treeTilt 6s ease-in-out infinite;
+}
+@keyframes treeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes treeTilt {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 2deg; }
+}
+
+.tree {
+  width: clamp(200px, 35vw, 340px);
+  display: block;
+  z-index: 2;
+}
+
+/* ====== TREE SHADOW ====== */
+.tree-shadow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 18px;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.35), rgba(255,255,255,0));
+  filter: blur(6px);
+  z-index: 1;
+}
+
+/* ====== TIMER ====== */
+.timer {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.time-card {
+  min-width: 90px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow:
+    inset 0 0 10px rgba(255,255,255,0.25),
+    0 0 20px rgba(255,255,255,0.15);
+}
+
+.time-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff6d5;
+  text-shadow: 0 0 12px rgba(255,220,150,0.8);
+}
+
+.time-label {
+  font-size: 13px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 480px) {
+  .timer {
+    gap: 10px;
+  }
+  .time-card {
+    min-width: 80px;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">Guga-ai <span class="logo-dot"></span></div>
-        <button id="new-chat-btn">+ Новый чат</button>
-      </div>
-      <div id="chats-list" class="chats-list"></div>
-      <div class="sidebar-footer">
-        <button id="settings-btn">Настройки</button>
-      </div>
-    </aside>
+<div class="stars" id="stars"></div>
 
-    <main class="chat">
-      <header class="chat-header">
-        <div class="model-indicator">
-          <div class="model-pill">
-            <span class="model-dot"></span>
-            <span>llama-3.3-70b-versatile</span>
-          </div>
-          <span>Guga-ai • Локальный ассистент</span>
-        </div>
-        <div class="header-right">
-          <label class="toggle">
-            <input type="checkbox" id="memory-toggle" checked />
-            <div class="toggle-switch">
-              <div class="toggle-thumb"></div>
-            </div>
-            <span>Память чата</span>
-          </label>
-          <div class="temp-display">
-            Температура: <span id="header-temp">0.7</span>
-          </div>
-        </div>
-      </header>
+<div class="scene">
+  <div class="title">С Новым Годом!</div>
 
-      <section class="messages" id="messages">
-        <div class="messages-inner" id="messages-inner">
-          <div class="starter-hint" id="starter-hint">
-            <div class="starter-hint-title">Привет, я Guga-ai.</div>
-            <div>Спрашивай, экспериментируй, загружай файлы или говори голосом — я разложу всё по полочкам.</div>
-            <div class="starter-tags">
-              <div class="starter-tag" data-prompt="Объясни архитектуру микросервисов простыми словами.">
-                Архитектура микросервисов
-              </div>
-              <div class="starter-tag" data-prompt="Сделай пример REST API на Java Spring Boot.">
-                REST API на Java
-              </div>
-              <div class="starter-tag" data-prompt="Помоги придумать структуру большого проекта на React, TypeScript и Node.js.">
-                Структура проекта
-              </div>
-              <div class="starter-tag" data-prompt="Разбей план изучения машинного обучения на 3 месяца.">
-                План обучения ML
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div id="typing-indicator" class="typing-indicator hidden">
-        <div class="typing-inner">
-          <div class="typing-pulse"></div>
-          <div class="typing-text">Guga-ai думает<span class="dots"></span></div>
-        </div>
-      </div>
-
-      <footer class="chat-input-area">
-        <div class="input-row">
-          <label class="file-input-label" title="Прикрепить файлы">
-            📎
-            <input type="file" id="file-input" multiple hidden />
-          </label>
-          <button id="mic-btn" class="icon-btn" title="Голосовой ввод">🎤</button>
-          <textarea id="user-input" rows="1" placeholder="Спроси что угодно..." spellcheck="true"></textarea>
-          <button id="send-btn" title="Отправить">➤</button>
-        </div>
-        <div class="input-hint">
-          <span>Enter — отправить, Shift+Enter — перенос строки.</span>
-          <span id="files-summary" class="files-summary"></span>
-        </div>
-      </footer>
-    </main>
+  <div class="tree-wrapper">
+    <img src="newyear_no_bg.png" alt="Ёлка" class="tree" />
+    <div class="tree-shadow"></div>
   </div>
 
-  <!-- Modal настройки -->
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Настройки Guga-ai</div>
-        <button id="close-settings-btn" class="btn-secondary">×</button>
-      </div>
-
-      <div class="modal-section">
-        <label for="temperature">Температура</label>
-        <div class="range-row">
-          <input type="range" id="temperature" min="0" max="1" step="0.05" value="0.7" />
-          <span id="temperature-value">0.7</span>
-        </div>
-      </div>
-
-      <div class="modal-section">
-        <label for="max-tokens">Максимальная длина ответа (tokens)</label>
-        <input type="number" id="max-tokens" value="1024" min="128" max="4096" step="64" />
-      </div>
-
-      <div class="modal-section">
-        <label for="format-style">Стиль форматирования</label>
-        <select id="format-style">
-          <option value="auto">Структурированный Markdown</option>
-          <option value="compact">Покомпактнее</option>
-          <option value="verbose">Очень подробно</option>
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <button id="clear-current-chat" class="btn-secondary">Очистить текущий чат</button>
-        <button id="clear-all-chats" class="btn-danger">Очистить все чаты</button>
-      </div>
+  <div class="timer">
+    <div class="time-card">
+      <div class="time-value" id="hours">00</div>
+      <div class="time-label">часов</div>
+    </div>
+    <div class="time-card">
+      <div class="time-value" id="minutes">00</div>
+      <div class="time-label">минут</div>
+    </div>
+    <div class="time-card">
+      <div class="time-value" id="seconds">00</div>
+      <div class="time-label">секунд</div>
     </div>
   </div>
-
-  <script>
-    /**********************
-     * КОНФИГ GUGA-AI
-     **********************/
-
-    // ВСТАВЬ СВОЙ КЛЮЧ СЮДА (не раздавай файл с ключом другим людям!)
-    const GROQ_API_KEY = "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"; // <-- сюда впиши gsk_xeIIf...
-
-    const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    const MODEL_NAME = "llama-3.3-70b-versatile";
-
-    // Системный промт для Guga-ai
-    const SYSTEM_PROMPT = `
-Ты — Guga-ai, персональный ИИ-помощник, работающий локально для пользователя.
-
-Твои цели:
-1. Отвечать максимально чётко, структурировано и практически полезно.
-2. Форматировать ответы в аккуратный Markdown:
-   - код — в блоки \`\`\`язык ... \`\`\`, чтобы их можно было копировать;
-   - использовать списки, заголовки и таблицы там, где это улучшает понимание;
-   - длинные объяснения разбивать на разделы с подзаголовками.
-3. Для кода старайся давать рабочие примеры с краткими комментариями и пояснениями.
-4. Не придумывай реальные API-ключи, пароли, токены и конфиденциальные данные. Никогда не раскрывай ключ Groq.
-5. Если пользователь загружает файлы (текст, документы, изображения, код), сначала коротко скажи, что ты из них понял, затем помоги с анализом.
-6. Если пользователь говорит голосом, воспринимай итоговый текст как обычный запрос.
-7. Всегда веди себя как Guga-ai, а не как другой ИИ.
-
-Пиши по-русски, если пользователь пишет по-русски.
-`.trim();
-
-    /**********************
-     * ЭЛЕМЕНТЫ DOM
-     **********************/
-
-    const messagesEl = document.getElementById("messages");
-    const messagesInnerEl = document.getElementById("messages-inner");
-    const userInputEl = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const micBtn = document.getElementById("mic-btn");
-    const fileInput = document.getElementById("file-input");
-    const filesSummaryEl = document.getElementById("files-summary");
-    const typingIndicatorEl = document.getElementById("typing-indicator");
-    const memoryToggle = document.getElementById("memory-toggle");
-    const newChatBtn = document.getElementById("new-chat-btn");
-    const chatsListEl = document.getElementById("chats-list");
-    const settingsBtn = document.getElementById("settings-btn");
-    const settingsModal = document.getElementById("settings-modal");
-    const closeSettingsBtn = document.getElementById("close-settings-btn");
-    const temperatureInput = document.getElementById("temperature");
-    const temperatureValue = document.getElementById("temperature-value");
-    const headerTemp = document.getElementById("header-temp");
-    const maxTokensInput = document.getElementById("max-tokens");
-    const formatStyleSelect = document.getElementById("format-style");
-    const clearCurrentChatBtn = document.getElementById("clear-current-chat");
-    const clearAllChatsBtn = document.getElementById("clear-all-chats");
-    const starterHint = document.getElementById("starter-hint");
-
-    /**********************
-     * СОСТОЯНИЕ ПРИЛОЖЕНИЯ
-     **********************/
-
-    let chats = loadChats();
-    let currentChatId = chats.length ? chats[0].id : null;
-    let pendingFiles = [];
-    let recognizing = false;
-    let recognition = null;
-
-    init();
-
-    function init() {
-      if (!currentChatId) {
-        createNewChat();
-      } else {
-        renderChatsList();
-        renderMessages();
-      }
-
-      attachEvents();
-      initSpeechRecognition();
-      updateSettingsUIFromState();
-      updateStarterHintVisibility();
-    }
-
-    function attachEvents() {
-      sendBtn.addEventListener("click", sendMessage);
-      userInputEl.addEventListener("keydown", onUserInputKeydown);
-      fileInput.addEventListener("change", handleFilesSelected);
-      micBtn.addEventListener("click", toggleMic);
-      newChatBtn.addEventListener("click", createNewChat);
-      settingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
-      closeSettingsBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
-      temperatureInput.addEventListener("input", onTemperatureChange);
-      maxTokensInput.addEventListener("change", onMaxTokensChange);
-      formatStyleSelect.addEventListener("change", onFormatStyleChange);
-      clearCurrentChatBtn.addEventListener("click", clearCurrentChat);
-      clearAllChatsBtn.addEventListener("click", clearAllChats);
-      memoryToggle.addEventListener("change", saveSettingsState);
-
-      // клики по подсказкам
-      document.querySelectorAll(".starter-tag").forEach(tag => {
-        tag.addEventListener("click", () => {
-          userInputEl.value = tag.dataset.prompt || tag.textContent.trim();
-          autoResizeTextarea();
-          sendMessage();
-        });
-      });
-
-      // авто-ресайз textarea
-      userInputEl.addEventListener("input", autoResizeTextarea);
-      autoResizeTextarea();
-
-      // закрытие модалки по клику вокруг
-      settingsModal.addEventListener("click", (e) => {
-        if (e.target === settingsModal) {
-          settingsModal.classList.add("hidden");
-        }
-      });
-    }
-
-    function onUserInputKeydown(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-
-    function onTemperatureChange() {
-      temperatureValue.textContent = temperatureInput.value;
-      headerTemp.textContent = temperatureInput.value;
-      saveSettingsState();
-    }
-
-    function onMaxTokensChange() {
-      if (maxTokensInput.value < 128) maxTokensInput.value = 128;
-      if (maxTokensInput.value > 4096) maxTokensInput.value = 4096;
-      saveSettingsState();
-    }
-
-    function onFormatStyleChange() {
-      saveSettingsState();
-    }
-
-    function saveSettingsState() {
-      const settings = {
-        temperature: parseFloat(temperatureInput.value),
-        maxTokens: parseInt(maxTokensInput.value, 10),
-        formatStyle: formatStyleSelect.value,
-        memoryEnabled: memoryToggle.checked,
-      };
-      localStorage.setItem("guga_settings", JSON.stringify(settings));
-    }
-
-    function loadSettingsState() {
-      try {
-        return JSON.parse(localStorage.getItem("guga_settings") || "{}");
-      } catch {
-        return {};
-      }
-    }
-
-    function updateSettingsUIFromState() {
-      const settings = loadSettingsState();
-      if (settings.temperature !== undefined) {
-        temperatureInput.value = settings.temperature;
-        temperatureValue.textContent = settings.temperature;
-        headerTemp.textContent = settings.temperature;
-      }
-      if (settings.maxTokens !== undefined) {
-        maxTokensInput.value = settings.maxTokens;
-      }
-      if (settings.formatStyle) {
-        formatStyleSelect.value = settings.formatStyle;
-      }
-      if (settings.memoryEnabled !== undefined) {
-        memoryToggle.checked = settings.memoryEnabled;
-      }
-    }
-
-    /**********************
-     * РАБОТА С ЧАТАМИ
-     **********************/
-
-    function loadChats() {
-      try {
-        return JSON.parse(localStorage.getItem("guga_chats") || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function saveChats() {
-      localStorage.setItem("guga_chats", JSON.stringify(chats));
-    }
-
-    function createNewChat() {
-      const id = Date.now().toString();
-      const chat = {
-        id,
-        title: "Новый чат",
-        messages: [],
-        createdAt: new Date().toISOString(),
-      };
-      chats.unshift(chat);
-      currentChatId = id;
-      saveChats();
-      renderChatsList();
-      renderMessages();
-      updateStarterHintVisibility();
-    }
-
-    function deleteChat(id) {
-      const idx = chats.findIndex((c) => c.id === id);
-      if (idx === -1) return;
-      chats.splice(idx, 1);
-      if (!chats.length) {
-        createNewChat();
-      } else {
-        currentChatId = chats[0].id;
-        saveChats();
-        renderChatsList();
-        renderMessages();
-      }
-      updateStarterHintVisibility();
-    }
-
-    function clearCurrentChat() {
-      const chat = chats.find((c) => c.id === currentChatId);
-      if (!chat) return;
-      if (!confirm("Очистить текущий чат полностью?")) return;
-      chat.messages = [];
-      saveChats();
-      renderMessages();
-      updateStarterHintVisibility();
-    }
-
-    function clearAllChats() {
-      if (!confirm("Удалить все чаты? Это действие нельзя отменить.")) return;
-      chats = [];
-      localStorage.removeItem("guga_chats");
-      createNewChat();
-      updateStarterHintVisibility();
-      settingsModal.classList.add("hidden");
-    }
-
-    function renderChatsList() {
-      chatsListEl.innerHTML = "";
-      chats.forEach((chat) => {
-        const item = document.createElement("div");
-        item.className = "chat-item" + (chat.id === currentChatId ? " active" : "");
-
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "chat-item-title";
-        titleDiv.textContent = chat.title || "Без названия";
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "chat-item-delete";
-        delBtn.innerHTML = "×";
-        delBtn.title = "Удалить чат";
-        delBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          deleteChat(chat.id);
-        });
-
-        item.addEventListener("click", () => {
-          currentChatId = chat.id;
-          renderChatsList();
-          renderMessages();
-          updateStarterHintVisibility();
-        });
-
-        item.appendChild(titleDiv);
-        item.appendChild(delBtn);
-        chatsListEl.appendChild(item);
-      });
-    }
-
-    function renderMessages() {
-      messagesInnerEl.innerHTML = "";
-      const chat = chats.find((c) => c.id === currentChatId);
-      if (!chat || !chat.messages.length) {
-        messagesInnerEl.appendChild(starterHint);
-        updateStarterHintVisibility();
-        return;
-      }
-
-      chat.messages.forEach(addMessageToDOM);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function updateStarterHintVisibility() {
-      const chat = chats.find((c) => c.id === currentChatId);
-      if (!chat || !chat.messages || !chat.messages.length) {
-        starterHint.style.display = "block";
-      } else {
-        starterHint.style.display = "none";
-      }
-    }
-
-    function addMessageToDOM(msg) {
-      const wrapper = document.createElement("div");
-      wrapper.className = `message ${msg.role}`;
-
-      const avatarDiv = document.createElement("div");
-      avatarDiv.className = `avatar ${msg.role}`;
-      avatarDiv.textContent = msg.role === "user" ? "👤" : "G";
-      const bubbleWrapper = document.createElement("div");
-      bubbleWrapper.className = "bubble-wrapper";
-
-      const metaRow = document.createElement("div");
-      metaRow.className = "meta-row";
-
-      const leftMeta = document.createElement("div");
-      leftMeta.textContent = msg.role === "user" ? "Вы" : "Guga-ai";
-
-      const rightMeta = document.createElement("div");
-      rightMeta.className = "timestamp";
-      rightMeta.textContent = msg.timestamp ? formatTime(msg.timestamp) : "";
-
-      if (msg.role === "assistant") {
-        const badge = document.createElement("span");
-        badge.className = "model-tag";
-        badge.textContent = "LLAMA 3.3 70B";
-        leftMeta.appendChild(document.createTextNode(" • "));
-        leftMeta.appendChild(badge);
-      }
-
-      metaRow.appendChild(leftMeta);
-      metaRow.appendChild(rightMeta);
-
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-
-      if (msg.role === "assistant") {
-        bubble.innerHTML = renderMarkdown(msg.content);
-        enhanceCodeBlocks(bubble);
-      } else {
-        bubble.textContent = msg.content;
-      }
-
-      bubbleWrapper.appendChild(metaRow);
-      bubbleWrapper.appendChild(bubble);
-
-      if (msg.role === "assistant") {
-        wrapper.appendChild(avatarDiv);
-        wrapper.appendChild(bubbleWrapper);
-      } else {
-        wrapper.appendChild(bubbleWrapper);
-        wrapper.appendChild(avatarDiv);
-      }
-
-      messagesInnerEl.appendChild(wrapper);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function formatTime(isoStr) {
-      try {
-        const d = new Date(isoStr);
-        return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      } catch {
-        return "";
-      }
-    }
-
-    /**********************
-     * ОТПРАВКА СООБЩЕНИЙ
-     **********************/
-
-    function autoResizeTextarea() {
-      userInputEl.style.height = "auto";
-      const newHeight = Math.min(userInputEl.scrollHeight, 120);
-      userInputEl.style.height = newHeight + "px";
-    }
-
-    async function sendMessage() {
-      const text = userInputEl.value.trim();
-      const hasText = text.length > 0;
-      const hasFiles = pendingFiles.length > 0;
-
-      if (!hasText && !hasFiles) return;
-      if (!GROQ_API_KEY || GROQ_API_KEY === "ВСТАВЬ_СВОЙ_КЛЮЧ_СЮДА") {
-        alert("Сначала вставь свой Groq API ключ в код (константа GROQ_API_KEY).");
-        return;
-      }
-
-      let chat = chats.find((c) => c.id === currentChatId);
-      if (!chat) {
-        createNewChat();
-        chat = chats.find((c) => c.id === currentChatId);
-      }
-
-      // Показать пользовательское сообщение
-      if (hasText) {
-        const userMsg = {
-          role: "user",
-          content: text,
-          timestamp: new Date().toISOString(),
-        };
-        chat.messages.push(userMsg);
-        saveChats();
-        addMessageToDOM(userMsg);
-      }
-
-      // Обновить заголовок чата по первому сообщению
-      if (chat.messages.length === 1 && hasText) {
-        chat.title = text.slice(0, 40) + (text.length > 40 ? "…" : "");
-        saveChats();
-        renderChatsList();
-      }
-
-      // Если есть файлы — прочитаем их текст
-      let filesText = "";
-      if (hasFiles) {
-        filesText = await readFilesAsTextSummary(pendingFiles);
-      }
-
-      // Сброс текстового поля и файлов
-      userInputEl.value = "";
-      pendingFiles = [];
-      fileInput.value = "";
-      filesSummaryEl.textContent = "";
-      autoResizeTextarea();
-      updateStarterHintVisibility();
-
-      // Собрать историю сообщений с учётом памяти
-      const settings = loadSettingsState();
-      const memoryEnabled = settings.memoryEnabled !== false;
-      const historyMessages = buildHistoryMessages(chat.messages, memoryEnabled);
-
-      // Добавить контекст про файлы, если есть
-      if (hasFiles && filesText) {
-        historyMessages.push({
-          role: "user",
-          content:
-            "Я прикрепил файлы (текст уже извлечён на клиенте). Вот сводка содержимого:\n\n" +
-            filesText +
-            "\n\nУчти это при ответе на мой вопрос/запрос выше.",
-        });
-      }
-
-      // Вызов модели
-      await askGroq(historyMessages);
-    }
-
-    function buildHistoryMessages(allMessages, memoryEnabled) {
-      // allMessages: [{role: "user"|"assistant", content: "..."}]
-      // Ограничим историю ~20 последними парами сообщений, если память выключена.
-      const history = [];
-      if (!memoryEnabled) {
-        const recent = allMessages.slice(-6); // последний диалог
-        history.push(...recent);
-      } else {
-        // простая "обрезка": максимум 32 сообщения
-        const recent = allMessages.slice(-32);
-        history.push(...recent);
-      }
-      return history.map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
-    }
-
-    async function askGroq(historyMessages) {
-      typingIndicatorEl.classList.remove("hidden");
-
-      const settings = loadSettingsState();
-      const temperature = settings.temperature ?? 0.7;
-      const maxTokens = settings.maxTokens ?? 1024;
-      const formatStyle = settings.formatStyle || "auto";
-
-      const styleInstruction = (() => {
-        switch (formatStyle) {
-          case "compact":
-            return "Отвечай покомпактнее, но всё равно структурировано и в Markdown. Избегай лишней воды.";
-          case "verbose":
-            return "Отвечай максимально подробно, с большим количеством примеров и пояснений, но по-прежнему структурируй Markdown.";
-          default:
-            return "Выбирай естественный баланс между краткостью и подробностью, структурируй Markdown.";
-        }
-      })();
-
-      const messages = [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT + "\n\nДополнительное указание по стилю: " + styleInstruction,
-        },
-        ...historyMessages,
-      ];
-
-      try {
-        const response = await fetch(GROQ_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + GROQ_API_KEY,
-          },
-          body: JSON.stringify({
-            model: MODEL_NAME,
-            messages,
-            temperature,
-            max_tokens: maxTokens,
-          }),
-        });
-
-        if (!response.ok) {
-          console.error("Groq API error:", await response.text());
-          throw new Error("Ошибка Groq API: " + response.status);
-        }
-
-        const data = await response.json();
-        const replyText = data.choices?.[0]?.message?.content || "Не удалось получить ответ от Guga-ai.";
-
-        const chat = chats.find((c) => c.id === currentChatId);
-        if (!chat) return;
-
-        const assistantMsg = {
-          role: "assistant",
-          content: replyText,
-          timestamp: new Date().toISOString(),
-        };
-        chat.messages.push(assistantMsg);
-        saveChats();
-        addMessageToDOM(assistantMsg);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-      } catch (err) {
-        console.error(err);
-        const chat = chats.find((c) => c.id === currentChatId);
-        if (!chat) return;
-        const errorMsg = {
-          role: "assistant",
-          content: "Произошла ошибка при обращении к Guga-ai. Проверни подключение к интернету и ключ API.",
-          timestamp: new Date().toISOString(),
-        };
-        chat.messages.push(errorMsg);
-        saveChats();
-        addMessageToDOM(errorMsg);
-      } finally {
-        typingIndicatorEl.classList.add("hidden");
-      }
-    }
-
-    /**********************
-     * РАБОТА С ФАЙЛАМИ
-     **********************/
-
-    function handleFilesSelected(e) {
-      const files = Array.from(e.target.files || []);
-      if (!files.length) return;
-      pendingFiles = files;
-      const names = files.slice(0, 3).map((f) => f.name);
-      let summary = names.join(", ");
-      if (files.length > 3) {
-        summary += ` и ещё ${files.length - 3}`;
-      }
-      filesSummaryEl.textContent = `Файлы: ${summary}`;
-    }
-
-    async function readFilesAsTextSummary(files) {
-      const textParts = [];
-      for (const file of files) {
-        const ext = (file.name.split(".").pop() || "").toLowerCase();
-        if (["txt", "md", "json", "js", "ts", "java", "py", "cpp", "c", "cs", "html", "css"].includes(ext)) {
-          const text = await readFileAsText(file);
-          textParts.push(`Файл: ${file.name}\nТип: текст\nРазмер: ${file.size} байт\n---\n${text.slice(0, 8000)}\n`);
-        } else if (["png", "jpg", "jpeg", "webp", "gif"].includes(ext)) {
-          textParts.push(
-            `Файл: ${file.name}\nТип: изображение (${ext}), размер ${file.size} байт.\n` +
-            "На клиенте я не вижу содержимое пикселей, но можешь описать мне, что на картинке, и я помогу с анализом."
-          );
-        } else if (["pdf", "doc", "docx"].includes(ext)) {
-          textParts.push(
-            `Файл: ${file.name}\nТип: документ (${ext}), размер ${file.size} байт.\n` +
-            "Текст из таких файлов лучше заранее извлечь сторонними инструментами и вставить сюда, но я всё равно учту этот файл в контексте."
-          );
-        } else {
-          textParts.push(
-            `Файл: ${file.name}\nТип: неизвестный/бинарный (${ext}), размер ${file.size} байт.\n` +
-            "Содержимое я напрямую не вижу, но можешь описать, что там внутри."
-          );
-        }
-      }
-      return textParts.join("\n\n");
-    }
-
-    function readFileAsText(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result || ""));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsText(file);
-      });
-    }
-
-    /**********************
-     * МИКРОФОН (Web Speech API)
-     **********************/
-
-    function initSpeechRecognition() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        console.warn("SpeechRecognition не поддерживается в этом браузере.");
-        micBtn.disabled = true;
-        micBtn.title = "SpeechRecognition не поддерживается в этом браузере.";
-        return;
-      }
-
-      recognition = new SpeechRecognition();
-      recognition.lang = "ru-RU";
-      recognition.interimResults = true;
-      recognition.continuous = false;
-
-      let finalTranscript = "";
-
-      recognition.onstart = () => {
-        finalTranscript = "";
-      };
-
-      recognition.onresult = (event) => {
-        let interim = "";
-        for (let i = 0; i < event.results.length; i++) {
-          const res = event.results[i];
-          if (res.isFinal) finalTranscript += res[0].transcript;
-          else interim += res[0].transcript;
-        }
-        userInputEl.value = finalTranscript || interim;
-        autoResizeTextarea();
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        recognizing = false;
-        micBtn.classList.remove("active");
-      };
-
-      recognition.onend = () => {
-        if (!recognizing) return;
-        recognizing = false;
-        micBtn.classList.remove("active");
-        if (userInputEl.value.trim()) {
-          sendMessage();
-        }
-      };
-    }
-
-    function toggleMic() {
-      if (!recognition) return;
-      if (!recognizing) {
-        recognizing = true;
-        micBtn.classList.add("active");
-        try {
-          recognition.start();
-        } catch (e) {
-          console.error("recognition.start error", e);
-          recognizing = false;
-          micBtn.classList.remove("active");
-        }
-      } else {
-        recognizing = false;
-        micBtn.classList.remove("active");
-        try {
-          recognition.stop();
-        } catch (e) {
-          console.error("recognition.stop error", e);
-        }
-      }
-    }
-
-    /**********************
-     * ПРОСТОЙ MARKDOWN РЕНДЕР
-     **********************/
-
-    function renderMarkdown(text) {
-      if (!text) return "";
-
-      // Экранируем базовые HTML-символы
-      let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-      // Код-блоки ```lang ... ```
-      safe = safe.replace(/```(\w+)?\n([\s\S]*?)```/g, (m, lang, code) => {
-        const langLabel = (lang || "text").toLowerCase();
-        const rawCode = code.replace(/&lt;/g, "<").replace(/&gt;/g, ">"); // для копирования
-        const encodedCode = encodeURIComponent(rawCode);
-        const prettyCode = code;
-        return `
-<div class="code-block">
-  <div class="code-block-header">
-    <span class="code-lang">${langLabel}</span>
-    <button class="copy-btn" data-code="${encodedCode}">Copy</button>
-  </div>
-  <pre><code class="language-${langLabel}">${prettyCode}</code></pre>
-</div>`;
-      });
-
-      // Заголовки
-      safe = safe.replace(/^### (.+)$/gm, "<h3>$1</h3>");
-      safe = safe.replace(/^## (.+)$/gm, "<h2>$1</h2>");
-      safe = safe.replace(/^# (.+)$/gm, "<h1>$1</h1>");
-
-      // Жирный/курсив
-      safe = safe.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-      safe = safe.replace(/\*(.+?)\*/g, "<em>$1</em>");
-
-      // Списки
-      safe = safe.replace(/^\s*[-*] (.+)$/gm, "<ul><li>$1</li></ul>");
-      safe = safe.replace(/^\s*\d+\. (.+)$/gm, "<ol><li>$1</li></ol>");
-
-      // Таблицы — оставим как есть, Markdown здесь будет немного ограничен
-
-      // Разбиваем параграфы
-      safe = safe.replace(/\n{2,}/g, "</p><p>");
-      safe = safe.replace(/\n/g, "<br />");
-
-      return `<p>${safe}</p>`;
-    }
-
-    function enhanceCodeBlocks(rootEl) {
-      rootEl.querySelectorAll(".copy-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const encoded = btn.getAttribute("data-code") || "";
-          const code = decodeURIComponent(encoded);
-          navigator.clipboard.writeText(code).then(
-            () => {
-              const original = btn.textContent;
-              btn.textContent = "Copied";
-              setTimeout(() => {
-                btn.textContent = original;
-              }, 1200);
-            },
-            (err) => console.error("Clipboard error:", err)
-          );
-        });
-      });
-    }
-  </script>
+</div>
+
+<script>
+/* ====== STARS GENERATION ====== */
+const starsContainer = document.getElementById("stars");
+const starCount = 80;
+
+for (let i = 0; i < starCount; i++) {
+  const star = document.createElement("div");
+  star.className = "star";
+  const size = Math.random() * 2 + 1;
+  star.style.width = size + "px";
+  star.style.height = size + "px";
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDuration = (Math.random() * 3 + 3) + "s";
+  starsContainer.appendChild(star);
+}
+
+/* ====== SNOW GENERATION ====== */
+const snowCount = 85;
+for (let i = 0; i < snowCount; i++) {
+  const snow = document.createElement("div");
+  snow.className = "snowflake";
+  snow.textContent = Math.random() > 0.5 ? "❄" : "❅";
+  const size = Math.random() * 12 + 8;
+  snow.style.fontSize = size + "px";
+  snow.style.left = Math.random() * 100 + "%";
+  snow.style.opacity = Math.random() * 0.6 + 0.3;
+  snow.style.setProperty("--drift", (Math.random() * 80 - 40) + "px");
+  snow.style.animationDuration = (Math.random() * 10 + 12) + "s";
+  snow.style.animationDelay = (-Math.random() * 20) + "s";
+  document.body.appendChild(snow);
+}
+
+/* ====== TIMER ====== */
+const targetTime = Date.UTC(2025, 11, 31, 19, 0, 0);
+
+function updateTimer() {
+  const now = Date.now();
+  let diff = targetTime - now;
+  if (diff < 0) diff = 0;
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+  document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+  document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+</script>
 </body>
 </html>
